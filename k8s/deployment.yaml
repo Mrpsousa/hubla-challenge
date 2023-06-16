@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goserver
+  labels:
+    app: goserver
+spec:
+  selector:
+    matchLabels:
+      app: goserver
+  replicas: 1
+  template:
+    metadata:
+      name: goserver
+      labels:
+        app: goserver
+    spec:
+      containers:
+      - name: goserver
+        image: mrpsousa/api-go-hubla
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8000
+          periodSeconds: 5
+          failureThreshold: 3
+          timeoutSeconds: 1
+          successThreshold: 1
+        envFrom:
+          - secretRef:
+              name: goserver-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goserver-web
+spec:
+  selector: 
+    app: goserver
+  ports:
+    - port: 80
+      targetPort: 8000
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: goserver-secret
+type: Opaque
+data:
+  DB_DRIVER: " "
+  DB_HOST: " "
+  DB_PORT: " "
+  DB_USER: " "
+  DB_PASSWORD: " "
+  DB_NAME: " "
+
+
+
