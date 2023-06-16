@@ -11,10 +11,24 @@ import (
 	"testing"
 
 	"github.com/mrpsousa/api/internal/infra/webserver/handlers"
+
+	"github.com/mrpsousa/api/internal/infra/database"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
+func returnDBInstance() (*gorm.DB, error) {
+	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
 func setup() *httptest.ResponseRecorder {
+	db, err := returnDBInstance()
+
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	file, err := writer.CreateFormFile("file", "test.txt")
@@ -34,7 +48,11 @@ func setup() *httptest.ResponseRecorder {
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(handlers.UploadHandler)
+
+	transactionDB := database.NewTransaction(db)
+	transactionHandler := handlers.NewTransactionHandler(transactionDB)
+
+	handler := http.HandlerFunc(transactionHandler.UploadHandler)
 
 	handler.ServeHTTP(rr, req)
 	return rr
@@ -47,13 +65,11 @@ func TestUploadHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 	assert.Equal(t, expectedResponse, rr.Body.String())
 
-	// Verifica se o arquivo foi criado corretamente
-	uploadPath := "./uploads/VALOR-test.txt"
+	uploadPath := "./uploads/uuid-test.txt"
 	_, err := os.Stat(uploadPath)
 	if os.IsNotExist(err) {
 		t.Errorf("uploaded file was not created: %v", err)
 	} else {
-		// Remove o arquivo após o teste
 		err = os.Remove(uploadPath)
 		if err != nil {
 			t.Errorf("error deleting uploaded file: %v", err)

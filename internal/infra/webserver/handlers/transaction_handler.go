@@ -6,9 +6,21 @@ import (
 	"net/http"
 	"os"
 	"text/template"
+
+	"github.com/mrpsousa/api/internal/infra/database"
 )
 
-func UploadHandler(w http.ResponseWriter, r *http.Request) {
+type TransactionHandler struct {
+	TransactionDB database.TransactionInterface
+}
+
+func NewTransactionHandler(db database.TransactionInterface) *TransactionHandler {
+	return &TransactionHandler{
+		TransactionDB: db,
+	}
+}
+
+func (t *TransactionHandler) UploadHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		t, err := template.ParseFiles("index.html")
 		if err != nil {
@@ -17,9 +29,6 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		t.Execute(w, nil)
 	} else if r.Method == "POST" {
-		// parse input, type multipart/form-data
-
-		// Parse our multipart form, 10 << 20 specifies a maximum
 		// upload of 10 MB files.
 		err := r.ParseMultipartForm(10 << 20) // limit your max input length!
 		if err != nil {
@@ -27,7 +36,6 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// retrieve the file from form data
 		file, header, err := r.FormFile("file")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -35,26 +43,25 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		defer file.Close()
 
-		// create a new file in the uploads directory
 		err = os.MkdirAll("./uploads", os.ModePerm)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		dst, err := os.Create("./uploads/" + "VALOR-" + header.Filename)
+		dst, err := os.Create("./uploads/" + "uuid-" + header.Filename)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		defer dst.Close()
 
-		// copy the uploaded file to the destination file
 		if _, err := io.Copy(dst, file); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		fmt.Fprintf(w, "File uploaded successfully!")
+		/////////////////////////////// t.save/create updload
 	} else {
 		http.Error(w, "Method not supported", http.StatusMethodNotAllowed)
 	}
