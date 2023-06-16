@@ -24,11 +24,11 @@ type Transaction struct {
 	Seller    string
 }
 
-func NewTransaction(tp int, dt, product, seller string, val float64) (*Transaction, error) {
+func NewTransaction(tp int8, dt, product, seller string, val float64) (*Transaction, error) {
 
 	transaction := &Transaction{
 		ID:        uuid.New().String(),
-		Type:      int8(tp),
+		Type:      tp,
 		CreatedAt: dt,
 		Product:   product,
 		Value:     val,

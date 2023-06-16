@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"text/template"
@@ -61,7 +62,10 @@ func (t *TransactionHandler) UploadHandler(w http.ResponseWriter, r *http.Reques
 		}
 
 		fmt.Fprintf(w, "File uploaded successfully!")
-		/////////////////////////////// t.save/create updload
+		err = t.TransactionDB.SaveFromFile("./uploads/sales.txt")
+		if err != nil {
+			log.Printf("ERRO DOIDO") //////////////////////////////////////////////////////////////////////////
+		}
 	} else {
 		http.Error(w, "Method not supported", http.StatusMethodNotAllowed)
 	}

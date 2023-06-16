@@ -19,8 +19,6 @@ func main() {
 
 	// config := configs.NewConfig()
 
-	// println(config.DBDriver)
-
 	db, err := gorm.Open(sqlite.Open("hubla.db"), &gorm.Config{})
 	if err != nil {
 		panic(err)

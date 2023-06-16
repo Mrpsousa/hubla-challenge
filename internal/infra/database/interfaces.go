@@ -4,6 +4,8 @@ import "github.com/mrpsousa/api/internal/entity"
 
 type TransactionInterface interface {
 	Create(transaction *entity.Transaction) error
+	SaveFromFile(path string) error
+	Save(line string) error
 }
 
 // 3. Exibir a lista de todas as transações de produtos importadas
