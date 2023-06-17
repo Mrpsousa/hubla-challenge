@@ -18,6 +18,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var dirPath = "./uploads"
+
 func returnDBInstance() (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
 	if err != nil {
@@ -58,21 +60,35 @@ func setup() *httptest.ResponseRecorder {
 	return rr
 }
 
+func tierDown() {
+	err := os.RemoveAll(dirPath)
+	if err != nil {
+		log.Println("Failed to remove tmp directory:", err)
+		return
+	}
+}
+
+func existFile() bool {
+	dirPath := "./uploads"
+
+	dir, err := os.Open(dirPath)
+	if err != nil {
+		log.Println("Failed to open dir")
+	}
+	defer dir.Close()
+
+	files, err := dir.ReadDir(-1)
+	if err != nil {
+		log.Println("Failed to read dir")
+	}
+	return (len(files) > 0)
+}
 func TestUploadHandler(t *testing.T) {
 	rr := setup()
 
 	expectedResponse := "File uploaded successfully!"
 	assert.Equal(t, http.StatusOK, rr.Code)
 	assert.Equal(t, expectedResponse, rr.Body.String())
-
-	uploadPath := "./uploads/uuid-test.txt"
-	_, err := os.Stat(uploadPath)
-	if os.IsNotExist(err) {
-		t.Errorf("uploaded file was not created: %v", err)
-	} else {
-		err = os.Remove(uploadPath)
-		if err != nil {
-			t.Errorf("error deleting uploaded file: %v", err)
-		}
-	}
+	assert.Equal(t, existFile(), true)
+	tierDown()
 }
