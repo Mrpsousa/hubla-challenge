@@ -10,9 +10,12 @@ import (
 	"os"
 	"testing"
 
+	"errors"
+
 	"github.com/mrpsousa/api/internal/entity"
 	"github.com/mrpsousa/api/internal/infra/database"
 	"github.com/mrpsousa/api/internal/infra/webserver/handlers"
+	"github.com/mrpsousa/api/mocks"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -68,55 +71,36 @@ func setup() *httptest.ResponseRecorder {
 	return rr
 }
 
-func TestCreateTransaction(t *testing.T) {
+func TestCreateTransactionSuccess(t *testing.T) {
 	db, err := returnDBInstance()
 	if err != nil {
 		t.Error(err)
 	}
 	db.AutoMigrate(&entity.Transaction{})
 	transaction, err := entity.NewTransaction(1, "2022-02-19T05:33:07-03", "DOMINANDO INVESTIMENTOS", "MARIA CANDIDA", 50000.0)
-	assert.NoError(t, err)
+	assert.Nil(t, err)
 	TransactionDB := database.NewTransaction(db)
 	err = TransactionDB.Create(transaction)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, transaction.ID)
+	assert.Nil(t, err)
+	assert.NotNil(t, transaction.ID)
 	tierDown()
 }
 
-// func TestSaveTransaction(t *testing.T) {
-// 	setup()
-// 	db, err := returnDBInstance()
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-// 	db.AutoMigrate(&entity.Transaction{})
-// 	transaction, err := entity.NewTransaction(1, "2022-02-19T05:33:07-03", "DOMINANDO INVESTIMENTOS", "MARIA CANDIDA", 50000.0)
-// 	assert.NoError(t, err)
-// 	TransactionDB := database.NewTransaction(db)
-// 	err = TransactionDB.Create(transaction)
-// 	assert.NoError(t, err)
-// 	assert.NotEmpty(t, transaction.ID)
+func TestCreateTransactionFail(t *testing.T) {
+	expectedError := errors.New("specific error")
 
-// }
+	db, err := returnDBInstance()
+	if err != nil {
+		t.Error(err)
+	}
+	db.AutoMigrate(&entity.Transaction{})
+	transaction, err := entity.NewTransaction(2, "2022-02-19T05:33:07-03", "DOMINANDO INVESTIMENTOS", "MARIA CANDIDA", 50000.0)
+	assert.NoError(t, err)
 
-// func (p *Transaction) Save(line string) error {
-// 	setup()
-// 	tp, err := pkg.StringToInt8(line[:1])
-// 	if err != nil {
-// 		return err
-// 	}
-// 	value, err := pkg.StringToFloat64(line[56:66])
-// 	if err != nil {
-// 		return err
-// 	}
-// 	createdAt := line[1:26]
-// 	product := line[26:56]
-// 	seller := line[66:]
+	TransactionDB := &mocks.TransactionInterface{}
+	TransactionDB.On("Create", transaction).Return(expectedError)
 
-// 	transaction, err := entity.NewTransaction(tp, createdAt, product, seller, value)
-// 	err = p.Create(transaction)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
+	err = TransactionDB.Create(transaction)
+	assert.NotNil(t, err)
+	tierDown()
+}
