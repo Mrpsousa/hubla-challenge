@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
+	"github.com/pemistahl/lingua-go"
 )
 
 var (
@@ -34,4 +35,22 @@ func StringToFloat64(str string) (float64, error) {
 
 func FileNameGenerate(file string) string {
 	return uuid.New().String() + "-" + file
+}
+
+func ForeignProductValidate(text string) bool {
+	languages := []lingua.Language{
+		lingua.Portuguese,
+		lingua.English,
+	}
+
+	detector := lingua.NewLanguageDetectorBuilder().
+		FromLanguages(languages...).
+		Build()
+
+	if language, exists := detector.DetectLanguageOf(text); exists {
+		if language.String() != "Portuguese" {
+			return true
+		}
+	}
+	return false
 }

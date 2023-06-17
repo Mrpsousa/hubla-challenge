@@ -1,6 +1,7 @@
 package entity_test
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/mrpsousa/api/internal/entity"
@@ -8,12 +9,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	TypeIsEqual bool
+)
+
 func TestNewTransaction(t *testing.T) {
 	tr, err := entity.NewTransaction(1, "2022-02-19T05:33:07-03", "DOMINANDO INVESTIMENTOS", "MARIA CANDIDA", 50000.0)
 	assert.Nil(t, err)
 	assert.NotNil(t, tr)
+	if reflect.TypeOf(tr) == reflect.TypeOf(&entity.Transaction{}) {
+		TypeIsEqual = true
+	}
 	assert.NotEmpty(t, tr.ID)
+	assert.True(t, TypeIsEqual)
 	assert.Equal(t, "MARIA CANDIDA", tr.Seller)
+	assert.Equal(t, false, tr.ForeignProduct)
+	assert.Equal(t, 50000.0, tr.Value)
+}
+
+func TestNewTransactionWithForeignProduct(t *testing.T) {
+	tr, err := entity.NewTransaction(1, "2022-02-19T05:33:07-03", "FULL STACK DEVELOPER", "MARIA CANDIDA", 50000.0)
+	assert.Nil(t, err)
+	assert.NotNil(t, tr)
+	if reflect.TypeOf(tr) == reflect.TypeOf(&entity.Transaction{}) {
+		TypeIsEqual = true
+	}
+	assert.NotEmpty(t, tr.ID)
+	assert.True(t, TypeIsEqual)
+	assert.Equal(t, "MARIA CANDIDA", tr.Seller)
+	assert.Equal(t, true, tr.ForeignProduct)
 	assert.Equal(t, 50000.0, tr.Value)
 }
 

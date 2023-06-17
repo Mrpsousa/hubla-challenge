@@ -6,23 +6,25 @@ import (
 )
 
 type Transaction struct {
-	ID        string
-	Type      int8
-	CreatedAt string `json:"created_at"` //TODO:  Data - ISO Date + GMT
-	Product   string
-	Value     float64
-	Seller    string
+	ID             string
+	Type           int8
+	CreatedAt      string `json:"created_at"` //TODO:  Data - ISO Date + GMT
+	Product        string
+	Value          float64
+	Seller         string
+	ForeignProduct bool
 }
 
 func NewTransaction(tp int8, dt, product, seller string, val float64) (*Transaction, error) {
 
 	transaction := &Transaction{
-		ID:        uuid.New().String(),
-		Type:      tp,
-		CreatedAt: dt,
-		Product:   product,
-		Value:     val,
-		Seller:    seller,
+		ID:             uuid.New().String(),
+		Type:           tp,
+		CreatedAt:      dt,
+		Product:        product,
+		Value:          val,
+		Seller:         seller,
+		ForeignProduct: pkg.ForeignProductValidate(product),
 	}
 	err := transaction.Validate()
 	if err != nil {
