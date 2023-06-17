@@ -32,6 +32,7 @@ func NewTransactionHandler(db database.TransactionInterface) *TransactionHandler
 //valor das transações em centavos /
 
 func (t *TransactionHandler) UploadHandler(w http.ResponseWriter, r *http.Request) {
+	// done := make(chan error)
 	if r.Method == "GET" {
 		t, err := template.ParseFiles("index.html")
 		if err != nil {
@@ -74,10 +75,14 @@ func (t *TransactionHandler) UploadHandler(w http.ResponseWriter, r *http.Reques
 		}
 
 		fmt.Fprintf(w, "File uploaded successfully!")
-		err = t.SaveFromFile(fmt.Sprintf("./uploads/%s", fileName))
-		if err != nil {
-			log.Printf(err.Error())
-		}
+
+		//saving data in background
+		go func() {
+			err := t.SaveFromFile(fmt.Sprintf("./uploads/%s", fileName))
+			if err != nil {
+				log.Printf(err.Error())
+			}
+		}()
 	} else {
 		http.Error(w, "Method not supported", http.StatusMethodNotAllowed)
 	}

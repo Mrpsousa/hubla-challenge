@@ -101,7 +101,7 @@ Esses são os valores possíveis para o campo Tipo:
 | ---- | ----------------- | -------- | ----- |
 | 1    | Venda produtor    | Entrada  | +     |
 | 2    | Venda afiliado    | Entrada  | +     |
-| 3    | Comissão paga     | Saída    | -     | // sainda de valor
+| 3    | Comissão paga     | Saída    | -     | // saida de valor
 | 4    | Comissão recebida | Entrada  | +     |
 
 ## Avaliação
