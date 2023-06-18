@@ -31,7 +31,7 @@ func NewTransactionHandler(db database.TransactionInterface) *TransactionHandler
 // 5. Exibir o saldo final de um afiliado
 //valor das transações em centavos /
 
-func (t *TransactionHandler) UploadHandler(w http.ResponseWriter, r *http.Request) {
+func (t *TransactionHandler) PageUploadFile(w http.ResponseWriter, r *http.Request) {
 	// done := make(chan error)
 	if r.Method == "GET" {
 		t, err := template.ParseFiles("index.html")

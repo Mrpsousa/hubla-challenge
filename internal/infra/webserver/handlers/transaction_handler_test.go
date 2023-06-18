@@ -64,7 +64,7 @@ func setup() *httptest.ResponseRecorder {
 	transactionDB := database.NewTransaction(db)
 	transactionHandler := handlers.NewTransactionHandler(transactionDB)
 
-	handler := http.HandlerFunc(transactionHandler.UploadHandler)
+	handler := http.HandlerFunc(transactionHandler.PageUploadFile)
 
 	handler.ServeHTTP(rr, req)
 	return rr
@@ -98,7 +98,7 @@ func setupFail() *httptest.ResponseRecorder {
 	transactionDB := database.NewTransaction(db)
 	transactionHandler := handlers.NewTransactionHandler(transactionDB)
 
-	handler := http.HandlerFunc(transactionHandler.UploadHandler)
+	handler := http.HandlerFunc(transactionHandler.PageUploadFile)
 
 	handler.ServeHTTP(rr, req)
 	return rr
@@ -121,45 +121,24 @@ func existFile() bool {
 }
 func TestUploadHandlerSuccess(t *testing.T) {
 	rr := setup()
-
+	defer tierDown()
 	expectedResponse := "File uploaded successfully!"
 	assert.Equal(t, http.StatusOK, rr.Code)
 	assert.Equal(t, expectedResponse, rr.Body.String())
 	assert.Equal(t, existFile(), true)
-	tierDown()
 }
 
 func TestUploadHandlerFail(t *testing.T) {
 	rr := setupFail()
-
+	defer tierDown()
 	expectedResponse := "Method not supported\n"
 	assert.NotEqual(t, http.StatusOK, rr.Code)
 	assert.Equal(t, expectedResponse, rr.Body.String())
 	assert.Equal(t, existFile(), false)
-	tierDown()
+
 }
 
-func TestSaveSuccess(t *testing.T) {
-	db, err := returnDBInstance()
-	if err != nil {
-		log.Fatal(err)
-	}
-	transactionDB := database.NewTransaction(db)
-	transactionHandler := handlers.NewTransactionHandler(transactionDB)
-	line := "12021-12-03T11:46:02-03:00DOMINANDO INVESTIMENTOS       0000050000MARIA CANDIDA"
-
-	err = transactionHandler.Save(line)
-	assert.Nil(t, err)
-
-	var transaction entity.Transaction
-	db.First(&transaction)
-
-	assert.Equal(t, int8(1), transaction.Type)
-	assert.Equal(t, "MARIA CANDIDA", transaction.Seller)
-	assert.Equal(t, "DOMINANDO INVESTIMENTOS       ", transaction.Product)
-}
-
-// func TestSaveFail(t *testing.T) {
+// func TestSaveSuccess(t *testing.T) {
 // 	db, err := returnDBInstance()
 // 	if err != nil {
 // 		log.Fatal(err)

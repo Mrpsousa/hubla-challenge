@@ -25,14 +25,15 @@ func main() {
 	}
 
 	db.AutoMigrate(&entity.Transaction{})
-	transactionDB := database.NewTransaction(db)
-	transactionHandler := handlers.NewTransactionHandler(transactionDB)
+	BaseDB := database.NewTransaction(db)
+	transactionHandler := handlers.NewTransactionHandler(BaseDB)
+	listHanlder := handlers.NewListHandler(BaseDB)
 	router := mux.NewRouter()
 
-	// Defina as rotas e os manipuladores
 	router.HandleFunc("/", handlers.IndexHandler)
-	router.HandleFunc("/upload", transactionHandler.UploadHandler)
-	// Inicie o servidor HTTP
-	fmt.Println("Servidor iniciado. Acesse http://localhost:8000/")
+	router.HandleFunc("/upload", transactionHandler.PageUploadFile)
+	router.HandleFunc("/list", listHanlder.ListProducingBalance)
+
+	fmt.Println("Server running in: http://localhost:8000/")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }

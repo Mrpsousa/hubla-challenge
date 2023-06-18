@@ -65,7 +65,7 @@ func setup() *httptest.ResponseRecorder {
 	transactionDB := database.NewTransaction(db)
 	transactionHandler := handlers.NewTransactionHandler(transactionDB)
 
-	handler := http.HandlerFunc(transactionHandler.UploadHandler)
+	handler := http.HandlerFunc(transactionHandler.PageUploadFile)
 
 	handler.ServeHTTP(rr, req)
 	return rr
