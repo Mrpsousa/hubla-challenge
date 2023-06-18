@@ -24,7 +24,7 @@ func TestNewTransaction(t *testing.T) {
 	assert.True(t, TypeIsEqual)
 	assert.Equal(t, "MARIA CANDIDA", tr.Seller)
 	assert.Equal(t, false, tr.ForeignProduct)
-	assert.Equal(t, 50000.0, tr.Value)
+	assert.Equal(t, 500.0, tr.Value)
 }
 
 func TestNewTransactionWithForeignProduct(t *testing.T) {
@@ -38,7 +38,7 @@ func TestNewTransactionWithForeignProduct(t *testing.T) {
 	assert.True(t, TypeIsEqual)
 	assert.Equal(t, "MARIA CANDIDA", tr.Seller)
 	assert.Equal(t, true, tr.ForeignProduct)
-	assert.Equal(t, 50000.0, tr.Value)
+	assert.Equal(t, 500.0, tr.Value)
 }
 
 func TestTransactionWhenTypeInvalid(t *testing.T) {

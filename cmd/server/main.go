@@ -32,7 +32,8 @@ func main() {
 
 	router.HandleFunc("/", handlers.IndexHandler)
 	router.HandleFunc("/upload", transactionHandler.PageUploadFile)
-	router.HandleFunc("/list", listHanlder.ListProducingBalance)
+	router.HandleFunc("/producers", listHanlder.ListProductorsBalance)
+	router.HandleFunc("/associates", listHanlder.ListAssociatesBalance)
 
 	fmt.Println("Server running in: http://localhost:8000/")
 	log.Fatal(http.ListenAndServe(":8000", router))

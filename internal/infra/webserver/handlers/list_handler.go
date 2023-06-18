@@ -23,8 +23,8 @@ func NewListHandler(db database.TransactionInterface) *ListHandler {
 	}
 }
 
-func (t *ListHandler) ListProducingBalance(w http.ResponseWriter, r *http.Request) {
-	var producers []entity.Producer
+func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Request) {
+	var producers []entity.DtoQueryResult
 
 	producers, err := t.ListDB.ListProductorBalance()
 	for idx := 0; idx < len(producers); idx++ {
@@ -42,5 +42,27 @@ func (t *ListHandler) ListProducingBalance(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(producers)
+
+}
+
+func (t *ListHandler) ListAssociatesBalance(w http.ResponseWriter, r *http.Request) {
+	var associates []entity.DtoQueryResult
+
+	associates, err := t.ListDB.ListAssociateBalance()
+	for idx := 0; idx < len(associates); idx++ {
+		if associates[idx].TValue == 0 {
+			associates = append(associates[:idx], associates[idx+1:]...)
+			idx--
+		}
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusNoContent)
+		json.NewEncoder(w).Encode(associates)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(associates)
 
 }

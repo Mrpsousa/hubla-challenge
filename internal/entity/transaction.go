@@ -22,7 +22,7 @@ func NewTransaction(tp int8, dt, product, seller string, val float64) (*Transact
 		Type:           tp,
 		CreatedAt:      dt,
 		Product:        product,
-		Value:          val,
+		Value:          (val / 100),
 		Seller:         seller,
 		ForeignProduct: pkg.ForeignProductValidate(product),
 	}
