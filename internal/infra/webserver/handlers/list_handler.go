@@ -34,7 +34,7 @@ func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Reque
 		}
 	}
 	if err != nil {
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(producers)
 		return
 	}
@@ -56,7 +56,7 @@ func (t *ListHandler) ListAssociatesBalance(w http.ResponseWriter, r *http.Reque
 		}
 	}
 	if err != nil {
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(associates)
 		return
 	}

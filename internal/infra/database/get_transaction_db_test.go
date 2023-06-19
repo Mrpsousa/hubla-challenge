@@ -1,12 +1,10 @@
 package database_test
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/mrpsousa/api/internal/entity"
 	"github.com/mrpsousa/api/internal/infra/database"
-	"github.com/mrpsousa/api/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -75,21 +73,62 @@ func TestGetAssociateBalanceSuccess(t *testing.T) {
 	assert.Equal(t, float64(1200), associate[0].TValue)
 }
 
-func TestGetAssociateBalanceFail(t *testing.T) {
-	// var tt entity.Transaction
-	expectedError := errors.New("specific_error")
-	// db, err := returnDBInstance()
-	// if err != nil {
-	// 	t.Error(err)
-	// }
+func TestGetAssociateBalanceWhenEmpty(t *testing.T) {
+	db, err := returnDBInstance()
+	if err != nil {
+		t.Error(err)
+	}
 
-	TransactionDB := &mocks.TransactionInterface{}
+	db.AutoMigrate(&entity.Transaction{})
+	TransactionDB := database.NewTransaction(db)
+	producers, err := TransactionDB.GetProductorBalance()
+	assert.Nil(t, err)
+	assert.Empty(t, producers)
 
-	TransactionDB.On("GetAssociateBalance", nil).Return(expectedError)
+}
+
+func TestGetProductorBalanceWhenEmpty(t *testing.T) {
+	db, err := returnDBInstance()
+	if err != nil {
+		t.Error(err)
+	}
+
+	db.AutoMigrate(&entity.Transaction{})
+	TransactionDB := database.NewTransaction(db)
 	associantes, err := TransactionDB.GetAssociateBalance()
-	assert.NotNil(t, err)
-	assert.Nil(t, associantes)
+	assert.Nil(t, err)
+	assert.Empty(t, associantes)
 
-	// assert.NotNil(t, err)
-	// assert.Equal(t, "record not found", err.Error())
+}
+
+func TestGetAssociateBalanceWhenFail(t *testing.T) {
+	var associatesList []entity.DtoSellers
+
+	db, err := returnDBInstance()
+	if err != nil {
+		t.Error(err)
+	}
+
+	TransactionDB := database.NewTransaction(db)
+	associates, err := TransactionDB.GetAssociateBalance()
+	assert.NotNil(t, err)
+	assert.Empty(t, associates)
+	assert.Equal(t, associatesList, associates)
+	assert.Equal(t, "fail_to_query_associates", err.Error())
+}
+
+func TestGetProductorBalanceWhenFail(t *testing.T) {
+	var producersList []entity.DtoSellers
+
+	db, err := returnDBInstance()
+	if err != nil {
+		t.Error(err)
+	}
+
+	TransactionDB := database.NewTransaction(db)
+	producers, err := TransactionDB.GetProductorBalance()
+	assert.NotNil(t, err)
+	assert.Empty(t, producers)
+	assert.Equal(t, producersList, producers)
+	assert.Equal(t, "fail_to_query_producers", err.Error())
 }
