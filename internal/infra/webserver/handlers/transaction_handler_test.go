@@ -138,22 +138,22 @@ func TestUploadHandlerFail(t *testing.T) {
 
 }
 
-// func TestSaveSuccess(t *testing.T) {
-// 	db, err := returnDBInstance()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	transactionDB := database.NewTransaction(db)
-// 	transactionHandler := handlers.NewTransactionHandler(transactionDB)
-// 	line := "12021-12-03T11:46:02-03:00DOMINANDO INVESTIMENTOS       0000050000MARIA CANDIDA"
+func TestSaveSuccess(t *testing.T) {
+	db, err := returnDBInstance()
+	if err != nil {
+		log.Fatal(err)
+	}
+	transactionDB := database.NewTransaction(db)
+	transactionHandler := handlers.NewTransactionHandler(transactionDB)
+	line := "12021-12-03T11:46:02-03:00DOMINANDO INVESTIMENTOS       0000050000MARIA CANDIDA"
 
-// 	err = transactionHandler.Save(line)
-// 	assert.Nil(t, err)
+	err = transactionHandler.Save(line)
+	assert.Nil(t, err)
 
-// 	var transaction entity.Transaction
-// 	db.First(&transaction)
+	var transaction entity.Transaction
+	db.First(&transaction)
 
-// 	assert.Equal(t, int8(1), transaction.Type)
-// 	assert.Equal(t, "MARIA CANDIDA", transaction.Seller)
-// 	assert.Equal(t, "DOMINANDO INVESTIMENTOS       ", transaction.Product)
-// }
+	assert.Equal(t, int8(1), transaction.Type)
+	assert.Equal(t, "MARIA CANDIDA", transaction.Seller)
+	assert.Equal(t, "DOMINANDO INVESTIMENTOS       ", transaction.Product)
+}

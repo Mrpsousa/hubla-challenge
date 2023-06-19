@@ -17,11 +17,57 @@ func (_m *TransactionInterface) Create(transaction *entity.Transaction) error {
 	ret := _m.Called(transaction)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Transaction) error); ok {
-		r0 = rf(transaction)
+	if rf, ok := ret.Get(0).(func(entity.Transaction) error); ok {
+		r0 = rf(*transaction)
 	} else {
 		r0 = ret.Error(0)
 	}
 
 	return r0
+}
+
+// GetAssociateBalance provides a mock function with given fields:
+func (_m *TransactionInterface) GetAssociateBalance() ([]entity.DtoSellers, error) {
+	ret := _m.Called()
+
+	var r0 []entity.DtoSellers
+	if rf, ok := ret.Get(0).(func() []entity.DtoSellers); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.DtoSellers)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetProductorBalance provides a mock function with given fields:
+func (_m *TransactionInterface) GetProductorBalance() ([]entity.DtoSellers, error) {
+	ret := _m.Called()
+
+	var r0 []entity.DtoSellers
+	if rf, ok := ret.Get(0).(func() []entity.DtoSellers); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.DtoSellers)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }

@@ -1,10 +1,15 @@
 package database
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/mrpsousa/api/internal/entity"
 	"gorm.io/gorm"
+)
+
+var (
+	ErrorQueryListProducer  = errors.New("fail_to_query_producers")
+	ErrorQueryListAssociate = errors.New("fail_to_query_associates")
 )
 
 type Transaction struct {
@@ -19,10 +24,11 @@ func (p *Transaction) Create(user *entity.Transaction) error {
 	return p.DB.Create(user).Error
 }
 
-func (t *Transaction) ListProductorBalance() ([]entity.DtoQueryResult, error) {
-	var associates []entity.DtoQueryResult
-	var associate entity.DtoQueryResult
-	rows, err := t.DB.Model(&entity.DtoQueryResult{}).Raw(`
+func (t *Transaction) GetProductorBalance() ([]entity.DtoSellers, error) {
+	var producers = make([]entity.DtoSellers, 0)
+	var produtor entity.DtoSellers
+
+	rows, err := t.DB.Model(&entity.DtoSellers{}).Raw(`
 	SELECT DISTINCT
     	t.seller,
     	s.tvalue
@@ -43,34 +49,35 @@ func (t *Transaction) ListProductorBalance() ([]entity.DtoQueryResult, error) {
         	transactions
     	GROUP BY
         	product
-) s ON t.product = s.product
-WHERE
-    t.type = 1;`).Rows()
+	) s ON t.product = s.product
+	WHERE
+    	t.type = 1;`).Rows()
 
 	if err != nil {
-		return nil, err // fazer tratamento errro <----------------
+		return nil, ErrorQueryListProducer
+
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&associate.Seller, &associate.TValue)
+		err := rows.Scan(&produtor.Seller, &produtor.TValue)
 		if err != nil {
-			return nil, err // fazer tratamento errro <----------------
+			return nil, ErrorQueryListProducer
 		}
-		associates = append(associates, associate)
-		fmt.Println(associate.Seller, associate.TValue)
+		producers = append(producers, produtor)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, err // fazer tratamento errro <----------------
+		return nil, ErrorQueryListProducer
 	}
 
-	return t.ConsolidateSellers(associates), nil
+	return t.ConsolidateSellers(producers), nil
 }
 
-func (t *Transaction) ListAssociateBalance() ([]entity.DtoQueryResult, error) {
-	var associates []entity.DtoQueryResult
-	var associate entity.DtoQueryResult
-	rows, err := t.DB.Model(&entity.DtoQueryResult{}).Raw(`
+func (t *Transaction) GetAssociateBalance() ([]entity.DtoSellers, error) {
+	var associates = make([]entity.DtoSellers, 0)
+	var associate entity.DtoSellers
+
+	rows, err := t.DB.Model(&entity.DtoSellers{}).Raw(`
 	SELECT
     	seller,
     	SUM(value) AS tvalue
@@ -82,35 +89,35 @@ func (t *Transaction) ListAssociateBalance() ([]entity.DtoQueryResult, error) {
     	seller;`).Rows()
 
 	if err != nil {
-		return nil, err // fazer tratamento errro <----------------
+		return nil, ErrorQueryListAssociate
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		err := rows.Scan(&associate.Seller, &associate.TValue)
 		if err != nil {
-			return nil, err // fazer tratamento errro <----------------
+			return nil, ErrorQueryListAssociate
 		}
 		associates = append(associates, associate)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, err // fazer tratamento errro <----------------
+		return nil, ErrorQueryListAssociate
 	}
 
 	return associates, nil
 }
 
-func (t *Transaction) ConsolidateSellers(dtoList []entity.DtoQueryResult) []entity.DtoQueryResult {
+func (t *Transaction) ConsolidateSellers(dtoList []entity.DtoSellers) []entity.DtoSellers {
 	consolidatedMap := make(map[string]float64)
 
 	for _, dto := range dtoList {
 		consolidatedMap[dto.Seller] += dto.TValue
 	}
 
-	consolidatedList := make([]entity.DtoQueryResult, 0)
+	consolidatedList := make([]entity.DtoSellers, 0)
 
 	for seller, value := range consolidatedMap {
-		consolidatedList = append(consolidatedList, entity.DtoQueryResult{
+		consolidatedList = append(consolidatedList, entity.DtoSellers{
 			Seller: seller,
 			TValue: value,
 		})

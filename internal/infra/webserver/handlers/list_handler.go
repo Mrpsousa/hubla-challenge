@@ -24,9 +24,9 @@ func NewListHandler(db database.TransactionInterface) *ListHandler {
 }
 
 func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Request) {
-	var producers []entity.DtoQueryResult
+	var producers = make([]entity.DtoSellers, 0)
 
-	producers, err := t.ListDB.ListProductorBalance()
+	producers, err := t.ListDB.GetProductorBalance()
 	for idx := 0; idx < len(producers); idx++ {
 		if producers[idx].TValue == 0 {
 			producers = append(producers[:idx], producers[idx+1:]...)
@@ -46,9 +46,9 @@ func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Reque
 }
 
 func (t *ListHandler) ListAssociatesBalance(w http.ResponseWriter, r *http.Request) {
-	var associates []entity.DtoQueryResult
+	var associates = make([]entity.DtoSellers, 0)
 
-	associates, err := t.ListDB.ListAssociateBalance()
+	associates, err := t.ListDB.GetAssociateBalance()
 	for idx := 0; idx < len(associates); idx++ {
 		if associates[idx].TValue == 0 {
 			associates = append(associates[:idx], associates[idx+1:]...)
