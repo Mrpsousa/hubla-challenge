@@ -1,9 +1,13 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/mrpsousa/api/pkg"
 )
+
+var base = "2006-01-02T15:04:05Z07:00"
 
 type Transaction struct {
 	ID             string
@@ -16,7 +20,6 @@ type Transaction struct {
 }
 
 func NewTransaction(tp int8, dt, product, seller string, val float64) (*Transaction, error) {
-
 	transaction := &Transaction{
 		ID:             uuid.New().String(),
 		Type:           tp,
@@ -26,6 +29,8 @@ func NewTransaction(tp int8, dt, product, seller string, val float64) (*Transact
 		Seller:         seller,
 		ForeignProduct: pkg.ForeignProductValidate(product),
 	}
+	transaction.CreatedAt = transaction.DateConvert()
+
 	err := transaction.Validate()
 	if err != nil {
 		return nil, err
@@ -53,5 +58,21 @@ func (t *Transaction) Validate() error {
 	if t.Seller == "" {
 		return pkg.ErrInvalidSeller
 	}
+	_, err := time.Parse(base, t.CreatedAt)
+	if err != nil {
+		return pkg.ErrInvalidDate
+	}
+
 	return nil
+}
+
+func (t *Transaction) DateConvert() string {
+	if t.CreatedAt == "" {
+		return ""
+	}
+	date, err := time.Parse(time.RFC3339, t.CreatedAt)
+	if err != nil {
+		return ""
+	}
+	return date.UTC().Format(base)
 }

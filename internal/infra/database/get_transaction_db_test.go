@@ -16,17 +16,17 @@ func TestGetProductorBalanceSuccess(t *testing.T) {
 	db.AutoMigrate(&entity.Transaction{})
 	TransactionDB := database.NewTransaction(db)
 
-	transaction, err := entity.NewTransaction(1, "2022-02-01T23:35:43-03", "DESENVOLVEDOR FULL STACK", "ELIANA NOGUEIRA", 155000)
+	transaction, err := entity.NewTransaction(1, "2022-02-01T23:35:43-03:00", "DESENVOLVEDOR FULL STACK", "ELIANA NOGUEIRA", 155000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction)
 	assert.Nil(t, err)
 
-	transaction2, err := entity.NewTransaction(2, "2022-02-03T17:23:37-03", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 155000)
+	transaction2, err := entity.NewTransaction(2, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 155000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction2)
 	assert.Nil(t, err)
 
-	transaction3, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 50000)
+	transaction3, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 50000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction3)
 	assert.Nil(t, err)
@@ -46,22 +46,22 @@ func TestGetAssociateBalanceSuccess(t *testing.T) {
 	db.AutoMigrate(&entity.Transaction{})
 	TransactionDB := database.NewTransaction(db)
 
-	transaction, err := entity.NewTransaction(2, "2022-02-03T17:23:37-03", "DESENVOLVEDOR BACKEND", "CARLOS BATISTA", 255000)
+	transaction, err := entity.NewTransaction(2, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR BACKEND", "CARLOS BATISTA", 255000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction)
 	assert.Nil(t, err)
 
-	transaction2, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03", "DESENVOLVEDOR BACKEND", "CARLOS BATISTA", 70000)
+	transaction2, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR BACKEND", "CARLOS BATISTA", 70000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction2)
 	assert.Nil(t, err)
 
-	transaction3, err := entity.NewTransaction(2, "2022-02-03T17:23:37-03", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 155000)
+	transaction3, err := entity.NewTransaction(2, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 155000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction3)
 	assert.Nil(t, err)
 
-	transaction4, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 50000)
+	transaction4, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 50000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction4)
 	assert.Nil(t, err)

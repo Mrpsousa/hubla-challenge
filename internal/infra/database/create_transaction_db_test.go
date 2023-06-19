@@ -28,7 +28,7 @@ func TestCreateTransactionSuccess(t *testing.T) {
 		t.Error(err)
 	}
 	db.AutoMigrate(&entity.Transaction{})
-	transaction, err := entity.NewTransaction(1, "2022-02-19T05:33:07-03", "DOMINANDO INVESTIMENTOS", "MARIA CANDIDA", 50000.0)
+	transaction, err := entity.NewTransaction(1, "2022-02-19T05:33:07-03:00", "DOMINANDO INVESTIMENTOS", "MARIA CANDIDA", 50000.0)
 	assert.Nil(t, err)
 	TransactionDB := database.NewTransaction(db)
 	err = TransactionDB.Create(transaction)
@@ -50,7 +50,7 @@ func TestCreateTransactionFail(t *testing.T) {
 		t.Error(err)
 	}
 	db.AutoMigrate(&entity.Transaction{})
-	transaction, err := entity.NewTransaction(2, "2022-02-19T05:33:07-03", "DOMINANDO INVESTIMENTOS", "MARIA CANDIDA", 50000.0)
+	transaction, err := entity.NewTransaction(2, "2022-02-19T05:33:07-03:00", "DOMINANDO INVESTIMENTOS", "MARIA CANDIDA", 50000.0)
 	assert.NoError(t, err)
 	TransactionDB := &mocks.TransactionInterface{}
 	TransactionDB.On("Create", transaction).Return(expectedError)
