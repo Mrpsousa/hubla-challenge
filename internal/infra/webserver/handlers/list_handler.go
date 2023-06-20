@@ -8,11 +8,6 @@ import (
 	"github.com/mrpsousa/api/internal/infra/database"
 )
 
-// 3. Exibir a lista de todas as transações de produtos importadas
-// 4. Exibir o saldo final do produtor
-// 5. Exibir o saldo final de um afiliado
-//valor das transações em centavos /
-
 type ListHandler struct {
 	ListDB database.TransactionInterface
 }

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>List</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 70%;
+        }
+
+        .table-wrapper {
+            width: 47.5%;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .upload-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .upload-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="table-wrapper">
+            <h2>Producer Balance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Seller</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody id="producers-table"></tbody>
+            </table>
+        </div>
+
+        <div class="table-wrapper">
+            <h2>Associates Balance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Seller</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody id="associates-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <button class="upload-button" onclick="redirectToOtherPage()">UPLOAD FILES</button>
+
+    <script>
+        // Fetch data from the /producers endpoint and populate the table
+        fetch('http://localhost:8000/producers')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('producers-table');
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    const sellerCell = document.createElement('td');
+                    const valueCell = document.createElement('td');
+
+                    sellerCell.textContent = item.seller;
+                    valueCell.textContent = item.value.toFixed(2); 
+                    row.appendChild(sellerCell);
+                    row.appendChild(valueCell);
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
+
+        // Fetch data from the /associates endpoint and populate the table
+        fetch('http://localhost:8000/associates')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('associates-table');
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    const sellerCell = document.createElement('td');
+                    const valueCell = document.createElement('td');
+
+                    sellerCell.textContent = item.seller;
+                    valueCell.textContent = item.value.toFixed(2); 
+
+                    row.appendChild(sellerCell);
+                    row.appendChild(valueCell);
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
+
+        function redirectToOtherPage() {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>

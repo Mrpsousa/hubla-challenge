@@ -3,6 +3,7 @@ package handlers_test
 import (
 	"bytes"
 	"io"
+	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/mrpsousa/api/internal/entity"
 	"github.com/mrpsousa/api/internal/infra/webserver/handlers"
+	"github.com/mrpsousa/api/pkg"
 
 	"github.com/mrpsousa/api/internal/infra/database"
 	"github.com/stretchr/testify/assert"
@@ -30,112 +32,14 @@ func returnDBInstance() (*gorm.DB, error) {
 	return db, nil
 }
 
-func tierDown() {
-	err := os.RemoveAll(dirPath)
-	if err != nil {
-		log.Println("Failed to remove tmp directory:", err)
-		return
-	}
-}
-
-func setup() *httptest.ResponseRecorder {
-	db, err := returnDBInstance()
-
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-	file, err := writer.CreateFormFile("file", "test.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = io.Copy(file, bytes.NewReader([]byte("This is a test file")))
-	if err != nil {
-		log.Fatal(err)
-	}
-	writer.Close()
-
-	req, err := http.NewRequest("POST", "/", body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	rr := httptest.NewRecorder()
-
-	transactionDB := database.NewTransaction(db)
-	transactionHandler := handlers.NewTransactionHandler(transactionDB)
-
-	handler := http.HandlerFunc(transactionHandler.PageUploadFile)
-
-	handler.ServeHTTP(rr, req)
-	return rr
-}
-
-func setupFail() *httptest.ResponseRecorder {
+func returnHanlder() *handlers.TransactionHandler {
 	db, err := returnDBInstance()
 	if err != nil {
 		log.Fatal(err)
 	}
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-	file, err := writer.CreateFormFile("file", "test.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = io.Copy(file, bytes.NewReader([]byte("This is a test file")))
-	if err != nil {
-		log.Fatal(err)
-	}
-	writer.Close()
-
-	req, err := http.NewRequest("PUT", "/", body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	rr := httptest.NewRecorder()
-
 	transactionDB := database.NewTransaction(db)
 	transactionHandler := handlers.NewTransactionHandler(transactionDB)
-
-	handler := http.HandlerFunc(transactionHandler.PageUploadFile)
-
-	handler.ServeHTTP(rr, req)
-	return rr
-}
-
-func existFile() bool {
-	dirPath := "./uploads"
-
-	dir, err := os.Open(dirPath)
-	if err != nil {
-		log.Println("Failed to open dir")
-	}
-	defer dir.Close()
-
-	files, err := dir.ReadDir(-1)
-	if err != nil {
-		log.Println("Failed to read dir")
-	}
-	return (len(files) > 0)
-}
-func TestUploadHandlerSuccess(t *testing.T) {
-	rr := setup()
-	defer tierDown()
-	expectedResponse := "File uploaded successfully!"
-	assert.Equal(t, http.StatusOK, rr.Code)
-	assert.Equal(t, expectedResponse, rr.Body.String())
-	assert.Equal(t, existFile(), true)
-}
-
-func TestUploadHandlerFail(t *testing.T) {
-	rr := setupFail()
-	defer tierDown()
-	expectedResponse := "Method not supported\n"
-	assert.NotEqual(t, http.StatusOK, rr.Code)
-	assert.Equal(t, expectedResponse, rr.Body.String())
-	assert.Equal(t, existFile(), false)
-
+	return transactionHandler
 }
 
 func TestSaveSuccess(t *testing.T) {
@@ -146,7 +50,6 @@ func TestSaveSuccess(t *testing.T) {
 	transactionDB := database.NewTransaction(db)
 	transactionHandler := handlers.NewTransactionHandler(transactionDB)
 	line := "12021-12-03T11:46:02-03:00DOMINANDO INVESTIMENTOS       0000050000MARIA CANDIDA"
-
 	err = transactionHandler.Save(line)
 	assert.Nil(t, err)
 
@@ -156,4 +59,66 @@ func TestSaveSuccess(t *testing.T) {
 	assert.Equal(t, int8(1), transaction.Type)
 	assert.Equal(t, "MARIA CANDIDA", transaction.Seller)
 	assert.Equal(t, "DOMINANDO INVESTIMENTOS       ", transaction.Product)
+}
+
+func TestPageUploadFileGET(t *testing.T) {
+	defer pkg.RemoveFolder(dirPath)
+	handler := returnHanlder()
+
+	req := httptest.NewRequest(http.MethodGet, "/upload", nil)
+	rec := httptest.NewRecorder()
+
+	handler.PageUploadFile(rec, req)
+
+	res := rec.Result()
+	defer res.Body.Close()
+	assert.Equal(t, http.StatusOK, res.StatusCode)
+
+	body, err := ioutil.ReadAll(res.Body)
+	assert.Nil(t, err)
+	assert.NotNil(t, body)
+
+}
+
+func TestPageUploadFilePOST(t *testing.T) {
+	defer pkg.RemoveFolder(dirPath)
+	handler := returnHanlder()
+	tmpFile, err := ioutil.TempFile("", "testfile")
+	assert.Nil(t, err)
+	defer os.Remove(tmpFile.Name())
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("file", tmpFile.Name())
+	assert.Nil(t, err)
+	_, err = io.Copy(part, tmpFile)
+	assert.Nil(t, err)
+	writer.Close()
+
+	req := httptest.NewRequest(http.MethodPost, "/upload", body)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	rec := httptest.NewRecorder()
+
+	handler.PageUploadFile(rec, req)
+
+	res := rec.Result()
+	defer res.Body.Close()
+	assert.Equal(t, http.StatusSeeOther, res.StatusCode)
+}
+
+func TestPageUploadFileUnsupportedMethod(t *testing.T) {
+	defer pkg.RemoveFolder(dirPath)
+	handler := returnHanlder()
+
+	req := httptest.NewRequest(http.MethodPut, "/upload", nil)
+	rec := httptest.NewRecorder()
+
+	handler.PageUploadFile(rec, req)
+
+	res := rec.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusMethodNotAllowed {
+		t.Errorf("expected status MethodNotAllowed; got %v", res.StatusCode)
+	}
 }

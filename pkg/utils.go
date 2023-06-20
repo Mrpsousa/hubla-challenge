@@ -2,6 +2,8 @@ package pkg
 
 import (
 	"errors"
+	"log"
+	"os"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -53,4 +55,13 @@ func ForeignProductValidate(text string) bool {
 		}
 	}
 	return false
+}
+
+// TODO must be tested
+func RemoveFolder(dirPath string) {
+	err := os.RemoveAll(dirPath)
+	if err != nil {
+		log.Println("failed_to_remove_tmp_directory:", err)
+		return
+	}
 }

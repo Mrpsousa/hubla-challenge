@@ -16,6 +16,8 @@ import (
 	"github.com/mrpsousa/api/pkg"
 )
 
+var dirPath = "uploads"
+
 type TransactionHandler struct {
 	TransactionDB database.TransactionInterface
 }
@@ -27,17 +29,16 @@ func NewTransactionHandler(db database.TransactionInterface) *TransactionHandler
 }
 
 func (t *TransactionHandler) PageUploadFile(w http.ResponseWriter, r *http.Request) {
-	// done := make(chan error)
 	if r.Method == "GET" {
-		t, err := template.ParseFiles("index.html")
+		tmpl, err := template.ParseFiles("../../../../templates/index.html")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		t.Execute(w, nil)
+		tmpl.Execute(w, nil)
 	} else if r.Method == "POST" {
-		// upload of 10 MB files.
-		err := r.ParseMultipartForm(10 << 20) // limit your max input length!
+		// Upload of 10 MB files.
+		err := r.ParseMultipartForm(10 << 20) // Limit your max input length!
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -50,14 +51,13 @@ func (t *TransactionHandler) PageUploadFile(w http.ResponseWriter, r *http.Reque
 		}
 		defer file.Close()
 
-		err = os.MkdirAll("./uploads", os.ModePerm)
+		err = os.MkdirAll(fmt.Sprintf("./%s", dirPath), os.ModePerm)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
 		fileName := pkg.FileNameGenerate(header.Filename)
-		dst, err := os.Create("./uploads/" + fileName)
+		dst, err := os.Create(fmt.Sprintf("./%s/", dirPath) + fileName)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -69,19 +69,24 @@ func (t *TransactionHandler) PageUploadFile(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		fmt.Fprintf(w, "File uploaded successfully!")
+		http.Redirect(w, r, "/middleware", http.StatusSeeOther)
 
 		//saving data in background
 		go func() {
-			err := t.SaveFromFile(fmt.Sprintf("./uploads/%s", fileName))
+			defer pkg.RemoveFolder(fmt.Sprintf("./%s", dirPath))
+			err := t.SaveFromFile(fmt.Sprintf("./%v/%s", dirPath, fileName))
 			if err != nil {
 				log.Printf(err.Error())
 			}
 		}()
+
 	} else {
 		http.Error(w, "Method not supported", http.StatusMethodNotAllowed)
 	}
+}
 
+func (t *TransactionHandler) ReturnToHomePage(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (t *TransactionHandler) Save(line string) error {
@@ -100,7 +105,7 @@ func (t *TransactionHandler) Save(line string) error {
 	transaction, err := entity.NewTransaction(tp, createdAt, product, seller, value)
 	err = t.TransactionDB.Create(transaction)
 	if err != nil {
-		return errors.New("Failed to create/save DB transaction")
+		return errors.New("failed_to_create/save_db_transaction")
 	}
 	return nil
 }
@@ -108,7 +113,7 @@ func (t *TransactionHandler) Save(line string) error {
 func (t *TransactionHandler) SaveFromFile(path string) error {
 	file, err := os.Open(path)
 	if err != nil {
-		return errors.New("Failed to open path")
+		return errors.New("failed_to_save_from_path")
 	}
 	defer file.Close()
 
@@ -119,7 +124,7 @@ func (t *TransactionHandler) SaveFromFile(path string) error {
 			if err == io.EOF {
 				break
 			}
-			return errors.New("Failed to read file")
+			return errors.New("failed_to_read_saved_file")
 		}
 		line = bytes.TrimSuffix(line, []byte{'\n'})
 		err = t.Save(string(line))

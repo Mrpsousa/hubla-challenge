@@ -31,6 +31,8 @@ func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/", handlers.IndexHandler)
+	router.HandleFunc("/middleware", handlers.MiddlewareHandler)
+	router.HandleFunc("/list", handlers.GetAllHandler)
 	router.HandleFunc("/upload", transactionHandler.PageUploadFile)
 	router.HandleFunc("/producers", listHanlder.ListProductorsBalance)
 	router.HandleFunc("/associates", listHanlder.ListAssociatesBalance)
