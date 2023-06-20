@@ -12,3 +12,18 @@ type DtoCourses struct {
 	Value     float64 `json:"value"`
 	Seller    string  `json:"seller"`
 }
+
+type GetJWTInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type GetJWTOutput struct {
+	AccessToken string `json:"access_token"`
+}
+
+type CreateUserInput struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

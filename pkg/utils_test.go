@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"os"
 	"reflect"
 	"testing"
 
@@ -67,4 +68,36 @@ func TestForeignProductValidateNotIsForeign(t *testing.T) {
 	tr := ForeignProductValidate(portugueseText)
 	assert.NotNil(t, tr)
 	assert.False(t, tr)
+}
+
+func TestRemoveFolder(t *testing.T) {
+	tmpDir := "./tmp"
+	err := os.Mkdir(tmpDir, 0755)
+	assert.Nil(t, err)
+	defer os.Remove(tmpDir)
+
+	RemoveFolder(tmpDir)
+
+	_, err = os.Stat(tmpDir)
+	if os.IsExist(err) {
+		t.Error("failed to remove tmp directory")
+	}
+}
+
+func TestParseIDSuccess(t *testing.T) {
+	validID := NewID()
+	validIDString := validID.String()
+
+	parsedID, err := ParseID(validIDString)
+	assert.Nil(t, err)
+
+	assert.Equal(t, parsedID, validID, parsedID)
+}
+
+func TestParseIDError(t *testing.T) {
+	invalidIDString := "invalid_id"
+
+	_, err := ParseID(invalidIDString)
+
+	assert.NotNil(t, err)
 }

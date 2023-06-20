@@ -11,3 +11,8 @@ type TransactionInterface interface {
 	GetAssociateBalance() ([]dto.DtoSellers, error)
 	GetForeignCourses() ([]dto.DtoCourses, error)
 }
+
+type UserInterface interface {
+	Create(user *entity.User) error
+	FindByEmail(email string) (*entity.User, error)
+}
