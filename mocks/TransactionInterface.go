@@ -4,6 +4,7 @@ package mocks
 
 import (
 	"github.com/mrpsousa/api/internal/entity"
+	"github.com/mrpsousa/api/internal/dto"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -27,15 +28,15 @@ func (_m *TransactionInterface) Create(transaction *entity.Transaction) error {
 }
 
 // GetAssociateBalance provides a mock function with given fields:
-func (_m *TransactionInterface) GetAssociateBalance() ([]entity.DtoSellers, error) {
+func (_m *TransactionInterface) GetAssociateBalance() ([]dto.DtoSellers, error) {
 	ret := _m.Called()
 
-	var r0 []entity.DtoSellers
-	if rf, ok := ret.Get(0).(func() []entity.DtoSellers); ok {
+	var r0 []dto.DtoSellers
+	if rf, ok := ret.Get(0).(func() []dto.DtoSellers); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]entity.DtoSellers)
+			r0 = ret.Get(0).([]dto.DtoSellers)
 		}
 	}
 
@@ -50,15 +51,38 @@ func (_m *TransactionInterface) GetAssociateBalance() ([]entity.DtoSellers, erro
 }
 
 // GetProductorBalance provides a mock function with given fields:
-func (_m *TransactionInterface) GetProductorBalance() ([]entity.DtoSellers, error) {
+func (_m *TransactionInterface) GetProductorBalance() ([]dto.DtoSellers, error) {
 	ret := _m.Called()
 
-	var r0 []entity.DtoSellers
-	if rf, ok := ret.Get(0).(func() []entity.DtoSellers); ok {
+	var r0 []dto.DtoSellers
+	if rf, ok := ret.Get(0).(func() []dto.DtoSellers); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]entity.DtoSellers)
+			r0 = ret.Get(0).([]dto.DtoSellers)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetForeignCourses provides a mock function with given fields:
+func (_m *TransactionInterface) GetForeignCourses() ([]dto.DtoCourses, error) {
+	ret := _m.Called()
+
+	var r0 []dto.DtoCourses
+	if rf, ok := ret.Get(0).(func() []dto.DtoCourses); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]dto.DtoCourses)
 		}
 	}
 

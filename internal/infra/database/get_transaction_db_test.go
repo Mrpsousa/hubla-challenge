@@ -3,6 +3,7 @@ package database_test
 import (
 	"testing"
 
+	"github.com/mrpsousa/api/internal/dto"
 	"github.com/mrpsousa/api/internal/entity"
 	"github.com/mrpsousa/api/internal/infra/database"
 	"github.com/stretchr/testify/assert"
@@ -102,7 +103,7 @@ func TestGetProductorBalanceWhenEmpty(t *testing.T) {
 }
 
 func TestGetAssociateBalanceWhenFail(t *testing.T) {
-	var associatesList []entity.DtoSellers
+	var associatesList []dto.DtoSellers
 
 	db, err := returnDBInstance()
 	if err != nil {
@@ -118,7 +119,7 @@ func TestGetAssociateBalanceWhenFail(t *testing.T) {
 }
 
 func TestGetProductorBalanceWhenFail(t *testing.T) {
-	var producersList []entity.DtoSellers
+	var producersList []dto.DtoSellers
 
 	db, err := returnDBInstance()
 	if err != nil {

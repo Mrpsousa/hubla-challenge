@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/mrpsousa/api/internal/entity"
+	"github.com/mrpsousa/api/internal/dto"
 	"github.com/mrpsousa/api/internal/infra/database"
 )
 
@@ -19,7 +19,7 @@ func NewListHandler(db database.TransactionInterface) *ListHandler {
 }
 
 func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Request) {
-	var producers = make([]entity.DtoSellers, 0)
+	var producers = make([]dto.DtoSellers, 0)
 
 	producers, err := t.ListDB.GetProductorBalance()
 	for idx := 0; idx < len(producers); idx++ {
@@ -41,7 +41,7 @@ func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Reque
 }
 
 func (t *ListHandler) ListAssociatesBalance(w http.ResponseWriter, r *http.Request) {
-	var associates = make([]entity.DtoSellers, 0)
+	var associates = make([]dto.DtoSellers, 0)
 
 	associates, err := t.ListDB.GetAssociateBalance()
 	for idx := 0; idx < len(associates); idx++ {
@@ -59,5 +59,22 @@ func (t *ListHandler) ListAssociatesBalance(w http.ResponseWriter, r *http.Reque
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(associates)
+
+}
+
+func (t *ListHandler) ListForeignCourses(w http.ResponseWriter, r *http.Request) {
+	var courses = make([]dto.DtoCourses, 0)
+
+	courses, err := t.ListDB.GetForeignCourses()
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(courses)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(courses)
 
 }

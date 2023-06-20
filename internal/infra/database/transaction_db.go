@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 
+	"github.com/mrpsousa/api/internal/dto"
 	"github.com/mrpsousa/api/internal/entity"
 	"gorm.io/gorm"
 )
@@ -24,11 +25,11 @@ func (p *Transaction) Create(user *entity.Transaction) error {
 	return p.DB.Create(user).Error
 }
 
-func (t *Transaction) GetProductorBalance() ([]entity.DtoSellers, error) {
-	var producers = make([]entity.DtoSellers, 0)
-	var produtor entity.DtoSellers
+func (t *Transaction) GetProductorBalance() ([]dto.DtoSellers, error) {
+	var producers = make([]dto.DtoSellers, 0)
+	var produtor dto.DtoSellers
 
-	rows, err := t.DB.Model(&entity.DtoSellers{}).Raw(`
+	rows, err := t.DB.Model(&dto.DtoSellers{}).Raw(`
 	SELECT DISTINCT
     	t.seller,
     	s.tvalue
@@ -73,11 +74,11 @@ func (t *Transaction) GetProductorBalance() ([]entity.DtoSellers, error) {
 	return t.ConsolidateSellers(producers), nil
 }
 
-func (t *Transaction) GetAssociateBalance() ([]entity.DtoSellers, error) {
-	var associates = make([]entity.DtoSellers, 0)
-	var associate entity.DtoSellers
+func (t *Transaction) GetAssociateBalance() ([]dto.DtoSellers, error) {
+	var associates = make([]dto.DtoSellers, 0)
+	var associate dto.DtoSellers
 
-	rows, err := t.DB.Model(&entity.DtoSellers{}).Raw(`
+	rows, err := t.DB.Model(&dto.DtoSellers{}).Raw(`
 	SELECT
     	seller,
     	SUM(value) AS tvalue
@@ -107,21 +108,41 @@ func (t *Transaction) GetAssociateBalance() ([]entity.DtoSellers, error) {
 	return associates, nil
 }
 
-func (t *Transaction) ConsolidateSellers(dtoList []entity.DtoSellers) []entity.DtoSellers {
+func (t *Transaction) ConsolidateSellers(dtoList []dto.DtoSellers) []dto.DtoSellers {
 	consolidatedMap := make(map[string]float64)
 
 	for _, dto := range dtoList {
 		consolidatedMap[dto.Seller] += dto.TValue
 	}
 
-	consolidatedList := make([]entity.DtoSellers, 0)
+	consolidatedList := make([]dto.DtoSellers, 0)
 
 	for seller, value := range consolidatedMap {
-		consolidatedList = append(consolidatedList, entity.DtoSellers{
+		consolidatedList = append(consolidatedList, dto.DtoSellers{
 			Seller: seller,
 			TValue: value,
 		})
 	}
 
 	return consolidatedList
+}
+
+func (t *Transaction) GetForeignCourses() ([]dto.DtoCourses, error) {
+	var transactions []entity.Transaction
+	var courses []dto.DtoCourses
+	err := t.DB.Where("foreign_product = ?", true).Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	for _, transaction := range transactions {
+		dtoCourse := dto.DtoCourses{
+			Type:      transaction.Type,
+			CreatedAt: transaction.CreatedAt,
+			Product:   transaction.Product,
+			Value:     transaction.Value,
+			Seller:    transaction.Seller,
+		}
+		courses = append(courses, dtoCourse)
+	}
+	return courses, nil
 }

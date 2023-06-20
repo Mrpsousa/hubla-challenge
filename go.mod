@@ -3,11 +3,12 @@ module github.com/mrpsousa/api
 go 1.20
 
 require (
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/google/uuid v1.3.0
-	github.com/gorilla/mux v1.8.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pemistahl/lingua-go v1.3.4
 	github.com/stretchr/testify v1.8.4
+	golang.org/x/crypto v0.10.0
 	gorm.io/driver/sqlite v1.5.2
 	gorm.io/gorm v1.25.2-0.20230530020048-26663ab9bf55
 )

@@ -21,7 +21,7 @@
         }
 
         .table-wrapper {
-            width: 47.5%;
+            width: 30%;
         }
 
         h2 {
@@ -50,6 +50,7 @@
             color: #ffffff;
             border: none;
             cursor: pointer;
+            margin-bottom: 20px;
         }
 
         .upload-button:hover {
@@ -58,6 +59,8 @@
     </style>
 </head>
 <body>
+    <button class="upload-button" onclick="redirectToOtherPage()">UPLOAD FILES</button>
+
     <div class="container">
         <div class="table-wrapper">
             <h2>Producer Balance</h2>
@@ -84,9 +87,23 @@
                 <tbody id="associates-table"></tbody>
             </table>
         </div>
-    </div>
 
-    <button class="upload-button" onclick="redirectToOtherPage()">UPLOAD FILES</button>
+        <div class="table-wrapper">
+            <h2>Foreign Courses</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Created At</th>
+                        <th>Product</th>
+                        <th>Value</th>
+                        <th>Seller</th>
+                    </tr>
+                </thead>
+                <tbody id="courses-table"></tbody>
+            </table>
+        </div>
+    </div>
 
     <script>
         // Fetch data from the /producers endpoint and populate the table
@@ -126,6 +143,38 @@
 
                     row.appendChild(sellerCell);
                     row.appendChild(valueCell);
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
+
+        // Fetch data from the /courses/foreign endpoint and populate the table
+        fetch('http://localhost:8000/courses/foreign')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('courses-table');
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    const typeCell = document.createElement('td');
+                    const createdAtCell = document.createElement('td');
+                    const productCell = document.createElement('td');
+                    const valueCell = document.createElement('td');
+                    const sellerCell = document.createElement('td');
+
+                    typeCell.textContent = item.type;
+                    createdAtCell.textContent = item.created_at;
+                    productCell.textContent = item.product;
+                    valueCell.textContent = item.value.toFixed(2); 
+                    sellerCell.textContent = item.seller;
+
+                    row.appendChild(typeCell);
+                    row.appendChild(createdAtCell);
+                    row.appendChild(productCell);
+                    row.appendChild(valueCell);
+                    row.appendChild(sellerCell);
 
                     tableBody.appendChild(row);
                 });

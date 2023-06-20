@@ -7,29 +7,29 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/mrpsousa/api/internal/entity"
+	"github.com/mrpsousa/api/internal/dto"
 	"github.com/mrpsousa/api/internal/infra/webserver/handlers"
 	"github.com/mrpsousa/api/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	associates = []entity.DtoSellers{
+	associates = []dto.DtoSellers{
 		{Seller: "John Doe", TValue: 100},
 		{Seller: "Jane Smith", TValue: 0},
 		{Seller: "Mike Johnson", TValue: 50},
 	}
-	producers = []entity.DtoSellers{
+	producers = []dto.DtoSellers{
 		{Seller: "Maria Maia", TValue: 100},
 		{Seller: "Kelly Smith", TValue: 0},
 		{Seller: "Kaio Jullius", TValue: 0},
 		{Seller: "Roger Santana", TValue: 50},
 	}
-	sellersResult []entity.DtoSellers
+	sellersResult []dto.DtoSellers
 )
 
 func TestListHandlerAssociatesSuccess(t *testing.T) {
-	expectedList := []entity.DtoSellers{
+	expectedList := []dto.DtoSellers{
 		{Seller: "John Doe", TValue: 100},
 		{Seller: "Mike Johnson", TValue: 50},
 	}
@@ -49,7 +49,7 @@ func TestListHandlerAssociatesSuccess(t *testing.T) {
 
 func TestListHandlerAssociatesFail(t *testing.T) {
 	expectedErr := errors.New("specific_error")
-	var expectedEmptyList []entity.DtoSellers
+	var expectedEmptyList []dto.DtoSellers
 
 	rr := httptest.NewRecorder()
 	mockTransactionDB := &mocks.TransactionInterface{}
@@ -66,7 +66,7 @@ func TestListHandlerAssociatesFail(t *testing.T) {
 }
 
 func TestListHandlerProducersSuccess(t *testing.T) {
-	expectedList := []entity.DtoSellers{
+	expectedList := []dto.DtoSellers{
 		{Seller: "Maria Maia", TValue: 100},
 		{Seller: "Roger Santana", TValue: 50},
 	}
@@ -87,7 +87,7 @@ func TestListHandlerProducersSuccess(t *testing.T) {
 
 func TestListHandlerProducersFail(t *testing.T) {
 	expectedErr := errors.New("specific_error")
-	var expectedEmptyList []entity.DtoSellers
+	var expectedEmptyList []dto.DtoSellers
 
 	rr := httptest.NewRecorder()
 	mockTransactionDB := &mocks.TransactionInterface{}

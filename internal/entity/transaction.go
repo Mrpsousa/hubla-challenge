@@ -7,12 +7,12 @@ import (
 	"github.com/mrpsousa/api/pkg"
 )
 
-var base = "2006-01-02T15:04:05Z07:00"
+var base = "2006-01-02 15:04:05"
 
 type Transaction struct {
 	ID             string
 	Type           int8
-	CreatedAt      string `json:"created_at"` //TODO:  Data - ISO Date + GMT
+	CreatedAt      string
 	Product        string
 	Value          float64
 	Seller         string
@@ -74,5 +74,6 @@ func (t *Transaction) DateConvert() string {
 	if err != nil {
 		return ""
 	}
+
 	return date.UTC().Format(base)
 }
