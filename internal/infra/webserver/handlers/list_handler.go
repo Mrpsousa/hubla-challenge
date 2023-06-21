@@ -18,6 +18,16 @@ func NewListHandler(db database.TransactionInterface) *ListHandler {
 	}
 }
 
+// ListProductorsBalance godoc
+// @Summary      List productors balance
+// @Description  get all productors balance
+// @Tags         productors balance
+// @Accept       json
+// @Produce      json
+// @Success      200       {array}   dto.DtoSellers
+// @Failure      500       {object}  Error
+// @Router       /producers [get]
+// Security ApiKeyAuth
 func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Request) {
 	var producers = make([]dto.DtoSellers, 0)
 
@@ -40,6 +50,16 @@ func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Reque
 
 }
 
+// ListAssociatesBalance godoc
+// @Summary      List associates balance
+// @Description  get all associates balance
+// @Tags         associates balance
+// @Accept       json
+// @Produce      json
+// @Success      200       {array}   dto.DtoSellers
+// @Failure      500       {object}  Error
+// @Router       /associates [get]
+// Security ApiKeyAuth
 func (t *ListHandler) ListAssociatesBalance(w http.ResponseWriter, r *http.Request) {
 	var associates = make([]dto.DtoSellers, 0)
 
@@ -62,6 +82,16 @@ func (t *ListHandler) ListAssociatesBalance(w http.ResponseWriter, r *http.Reque
 
 }
 
+// ListForeignCourses godoc
+// @Summary      List foreign courses
+// @Description  get all foreign courses
+// @Tags         foreign courses
+// @Accept       json
+// @Produce      json
+// @Success      200       {array}   dto.DtoCourses
+// @Failure      500       {object}  Error
+// @Router       /courses/foreign [get]
+// Security ApiKeyAuth
 func (t *ListHandler) ListForeignCourses(w http.ResponseWriter, r *http.Request) {
 	var courses = make([]dto.DtoCourses, 0)
 

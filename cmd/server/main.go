@@ -6,14 +6,34 @@ import (
 	"net/http"
 
 	"github.com/mrpsousa/api/configs"
+	_ "github.com/mrpsousa/api/docs"
 	"github.com/mrpsousa/api/internal/entity"
 	"github.com/mrpsousa/api/internal/infra/webserver/handlers"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/mrpsousa/api/internal/infra/database"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+// @title           Hubla Challenge
+// @version         1.0
+// @description     Product API with auhtentication
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   Marcos Rogerio
+// @contact.url    http://www.example.com.br
+// @contact.email  urameshi.uba@gmail.com
+
+// @license.name   License Name
+// @license.url    http://www.github.com
+
+// @host      localhost:8000
+// @BasePath  /
+// securityDefinitions.apikey ApiKeyAuth
+// in header
+// name Authorization
 
 func main() {
 
@@ -35,6 +55,7 @@ func main() {
 
 	router.Get("/users/create", handlers.CreateUserHandler)
 	router.Get("/users/login", handlers.UserLoginHandler)
+	router.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
 
 	router.Route("/", func(r chi.Router) {
 		// r.Use(jwtauth.Verifier(config.TokenAuth)) // get the token and inject it into the context
