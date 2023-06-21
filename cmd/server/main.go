@@ -69,8 +69,6 @@ func main() {
 	})
 
 	router.Route("/", func(r chi.Router) {
-		// r.Use(jwtauth.Verifier(config.TokenAuth)) // get the token and inject it into the context
-		// r.Use(jwtauth.Authenticator)              // validate of token
 		r.Get("/producers", listHanlder.ListProductorsBalance)
 		r.Get("/associates", listHanlder.ListAssociatesBalance)
 		r.Get("/courses/foreign", listHanlder.ListForeignCourses)
