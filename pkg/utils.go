@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -75,4 +76,19 @@ func NewID() ID {
 func ParseID(s string) (ID, error) {
 	id, err := uuid.Parse(s)
 	return ID(id), err
+}
+
+func listFilesInDirectory(dirPath string) {
+	entries, err := os.ReadDir(dirPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			fmt.Printf("Directory: %s\n", entry.Name())
+		} else {
+			fmt.Printf("File: %s\n", entry.Name())
+		}
+	}
 }
