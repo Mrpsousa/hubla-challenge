@@ -12,6 +12,7 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth"
 	"github.com/mrpsousa/api/internal/infra/database"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -31,10 +32,6 @@ import (
 
 // @host      localhost:8000
 // @BasePath  /
-// securityDefinitions.apikey ApiKeyAuth
-// in header
-// name Authorization
-
 func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	config := configs.NewConfig()
@@ -55,7 +52,7 @@ func main() {
 
 	router.Get("/users/create", handlers.CreateUserHandler)
 	router.Get("/users/login", handlers.UserLoginHandler)
-	router.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://24.199.71.130/docs/doc.json")))
+	router.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
 	router.Get("/middleware", handlers.MiddlewareHandler)
 	router.Get("/list", handlers.GetAllHandler)
 	router.Handle("/static/*", http.StripPrefix("/static/", fs))
@@ -68,12 +65,15 @@ func main() {
 		r.Post("/generate_token", userHandler.GetJWT)
 	})
 
+	//authorization protected endpoints
 	router.Route("/", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(config.TokenAuth))
+		r.Use(jwtauth.Authenticator)
 		r.Get("/producers", listHanlder.ListProductorsBalance)
 		r.Get("/associates", listHanlder.ListAssociatesBalance)
 		r.Get("/courses/foreign", listHanlder.ListForeignCourses)
 	})
 
-	fmt.Println("Server running in: http://24.199.71.130/")
+	fmt.Println("Server running in: http://localhost:8000/users/login")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
