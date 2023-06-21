@@ -12,7 +12,6 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/jwtauth"
 	"github.com/mrpsousa/api/internal/infra/database"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -70,8 +69,8 @@ func main() {
 	})
 
 	router.Route("/", func(r chi.Router) {
-		r.Use(jwtauth.Verifier(config.TokenAuth)) // get the token and inject it into the context
-		r.Use(jwtauth.Authenticator)              // validate of token
+		// r.Use(jwtauth.Verifier(config.TokenAuth)) // get the token and inject it into the context
+		// r.Use(jwtauth.Authenticator)              // validate of token
 		r.Get("/producers", listHanlder.ListProductorsBalance)
 		r.Get("/associates", listHanlder.ListAssociatesBalance)
 		r.Get("/courses/foreign", listHanlder.ListForeignCourses)
