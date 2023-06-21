@@ -72,7 +72,7 @@
 
     <script>
        function redirectToLoginPage() {
-        window.location.href = "http://24.199.71.130/users/login";
+        window.location.href = "http://localhost:8000/users/login";
       }
       // Fetch data from the /producers endpoint and populate the table
       const accessToken = localStorage.getItem("access_token");
@@ -81,7 +81,7 @@
         window.location.href = "/users/login"
       }
 
-      fetch("http://24.199.71.130/producers", {
+      fetch("http://localhost:8000/producers", {
         headers: { 'Authorization': `Bearer ${accessToken}` },
       })
         .then((response) => response.json())
@@ -105,7 +105,7 @@
         });
 
       // Fetch data from the /associates endpoint and populate the table
-      fetch("http://24.199.71.130/associates", {
+      fetch("http://localhost:8000/associates", {
         headers: { 'Authorization': `Bearer ${accessToken}` },
       })
         .then((response) => response.json())
@@ -130,7 +130,7 @@
         });
 
       // Fetch data from the /courses/foreign endpoint and populate the table
-      fetch("http://24.199.71.130/courses/foreign", {
+      fetch("http://localhost:8000/courses/foreign", {
         headers: { 'Authorization': `Bearer ${accessToken}` },
       })
         .then((response) => response.json())
