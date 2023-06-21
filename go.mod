@@ -10,6 +10,7 @@ require (
 	github.com/pemistahl/lingua-go v1.3.4
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/http-swagger v1.3.4
+	github.com/swaggo/swag v1.16.1
 	golang.org/x/crypto v0.10.0
 	gorm.io/driver/sqlite v1.5.2
 	gorm.io/gorm v1.25.2-0.20230530020048-26663ab9bf55
@@ -17,7 +18,6 @@ require (
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
@@ -36,13 +36,9 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
-	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe // indirect
-	github.com/swaggo/swag v1.16.1 // indirect
-	github.com/urfave/cli/v2 v2.3.0 // indirect
 	golang.org/x/exp v0.0.0-20221106115401-f9659909a136 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
@@ -50,5 +46,4 @@ require (
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
 )

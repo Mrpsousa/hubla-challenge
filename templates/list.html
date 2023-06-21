@@ -1,191 +1,152 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>List</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f2f2f2;
-        }
-
-        .container {
-            display: flex;
-            justify-content: space-between;
-            width: 70%;
-        }
-
-        .table-wrapper {
-            width: 30%;
-        }
-
-        h2 {
-            margin-bottom: 20px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .upload-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4caf50;
-            color: #ffffff;
-            border: none;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
-        .upload-button:hover {
-            background-color: #45a049;
-        }
-    </style>
-</head>
-<body>
-    <button class="upload-button" onclick="redirectToOtherPage()">UPLOAD FILES</button>
+    <link rel="stylesheet" href="../static/list.css">
+  </head>
+  <body>
+    <button class="upload-button" onclick="redirectToOtherPage()">
+      UPLOAD FILES
+    </button>
 
     <div class="container">
-        <div class="table-wrapper">
-            <h2>Producer Balance</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Seller</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody id="producers-table"></tbody>
-            </table>
-        </div>
+      <div class="table-wrapper">
+        <h2>Producer Balance</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Seller</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody id="producers-table"></tbody>
+        </table>
+      </div>
 
-        <div class="table-wrapper">
-            <h2>Associates Balance</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Seller</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody id="associates-table"></tbody>
-            </table>
-        </div>
+      <div class="table-wrapper">
+        <h2>Associates Balance</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Seller</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody id="associates-table"></tbody>
+        </table>
+      </div>
 
-        <div class="table-wrapper">
-            <h2>Foreign Courses</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Created At</th>
-                        <th>Product</th>
-                        <th>Value</th>
-                        <th>Seller</th>
-                    </tr>
-                </thead>
-                <tbody id="courses-table"></tbody>
-            </table>
-        </div>
+      <div class="table-wrapper">
+        <h2>Foreign Courses</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Created At</th>
+              <th>Product</th>
+              <th>Value</th>
+              <th>Seller</th>
+            </tr>
+          </thead>
+          <tbody id="courses-table"></tbody>
+        </table>
+      </div>
     </div>
 
     <script>
-        // Fetch data from the /producers endpoint and populate the table
-        fetch('http://localhost:8000/producers')
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.getElementById('producers-table');
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    const sellerCell = document.createElement('td');
-                    const valueCell = document.createElement('td');
+      // Fetch data from the /producers endpoint and populate the table
+      const accessToken = localStorage.getItem("access_token");
 
-                    sellerCell.textContent = item.seller;
-                    valueCell.textContent = item.value.toFixed(2); 
-                    row.appendChild(sellerCell);
-                    row.appendChild(valueCell);
+      if(!accessToken) {
+        window.location.href = "/users/login"
+      }
 
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(error => {
-                console.log('Error:', error);
-            });
+      fetch("http://localhost:8000/producers", {
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const tableBody = document.getElementById("producers-table");
+          data.forEach((item) => {
+            const row = document.createElement("tr");
+            const sellerCell = document.createElement("td");
+            const valueCell = document.createElement("td");
 
-        // Fetch data from the /associates endpoint and populate the table
-        fetch('http://localhost:8000/associates')
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.getElementById('associates-table');
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    const sellerCell = document.createElement('td');
-                    const valueCell = document.createElement('td');
+            sellerCell.textContent = item.seller;
+            valueCell.textContent = item.value.toFixed(2);
+            row.appendChild(sellerCell);
+            row.appendChild(valueCell);
 
-                    sellerCell.textContent = item.seller;
-                    valueCell.textContent = item.value.toFixed(2); 
+            tableBody.appendChild(row);
+          });
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+        });
 
-                    row.appendChild(sellerCell);
-                    row.appendChild(valueCell);
+      // Fetch data from the /associates endpoint and populate the table
+      fetch("http://localhost:8000/associates", {
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const tableBody = document.getElementById("associates-table");
+          data.forEach((item) => {
+            const row = document.createElement("tr");
+            const sellerCell = document.createElement("td");
+            const valueCell = document.createElement("td");
 
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(error => {
-                console.log('Error:', error);
-            });
+            sellerCell.textContent = item.seller;
+            valueCell.textContent = item.value.toFixed(2);
 
-        // Fetch data from the /courses/foreign endpoint and populate the table
-        fetch('http://localhost:8000/courses/foreign')
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.getElementById('courses-table');
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    const typeCell = document.createElement('td');
-                    const createdAtCell = document.createElement('td');
-                    const productCell = document.createElement('td');
-                    const valueCell = document.createElement('td');
-                    const sellerCell = document.createElement('td');
+            row.appendChild(sellerCell);
+            row.appendChild(valueCell);
 
-                    typeCell.textContent = item.type;
-                    createdAtCell.textContent = item.created_at;
-                    productCell.textContent = item.product;
-                    valueCell.textContent = item.value.toFixed(2); 
-                    sellerCell.textContent = item.seller;
+            tableBody.appendChild(row);
+          });
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+        });
 
-                    row.appendChild(typeCell);
-                    row.appendChild(createdAtCell);
-                    row.appendChild(productCell);
-                    row.appendChild(valueCell);
-                    row.appendChild(sellerCell);
+      // Fetch data from the /courses/foreign endpoint and populate the table
+      fetch("http://localhost:8000/courses/foreign", {
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const tableBody = document.getElementById("courses-table");
+          data.forEach((item) => {
+            const row = document.createElement("tr");
+            const typeCell = document.createElement("td");
+            const createdAtCell = document.createElement("td");
+            const productCell = document.createElement("td");
+            const valueCell = document.createElement("td");
+            const sellerCell = document.createElement("td");
 
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(error => {
-                console.log('Error:', error);
-            });
+            typeCell.textContent = item.type;
+            createdAtCell.textContent = item.created_at;
+            productCell.textContent = item.product;
+            valueCell.textContent = item.value.toFixed(2);
+            sellerCell.textContent = item.seller;
 
-        function redirectToOtherPage() {
-            window.location.href = "/";
-        }
+            row.appendChild(typeCell);
+            row.appendChild(createdAtCell);
+            row.appendChild(productCell);
+            row.appendChild(valueCell);
+            row.appendChild(sellerCell);
+
+            tableBody.appendChild(row);
+          });
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+        });
+
+      function redirectToOtherPage() {
+        window.location.href = "/";
+      }
     </script>
-</body>
+  </body>
 </html>

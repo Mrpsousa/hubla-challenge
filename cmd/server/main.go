@@ -12,6 +12,7 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth"
 	"github.com/mrpsousa/api/internal/infra/database"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -36,7 +37,7 @@ import (
 // name Authorization
 
 func main() {
-
+	fs := http.FileServer(http.Dir("./static"))
 	config := configs.NewConfig()
 
 	db, err := gorm.Open(sqlite.Open("hubla.db"), &gorm.Config{})
@@ -56,22 +57,23 @@ func main() {
 	router.Get("/users/create", handlers.CreateUserHandler)
 	router.Get("/users/login", handlers.UserLoginHandler)
 	router.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
-
-	router.Route("/", func(r chi.Router) {
-		// r.Use(jwtauth.Verifier(config.TokenAuth)) // get the token and inject it into the context
-		// r.Use(jwtauth.Authenticator)              // validate of token
-		r.Get("/", handlers.IndexHandler)
-		r.Get("/middleware", handlers.MiddlewareHandler)
-		r.Get("/list", handlers.GetAllHandler)
-		r.Post("/upload", transactionHandler.PageUploadFile)
-		r.Get("/producers", listHanlder.ListProductorsBalance)
-		r.Get("/associates", listHanlder.ListAssociatesBalance)
-		r.Get("/courses/foreign", listHanlder.ListForeignCourses)
-	})
+	router.Get("/middleware", handlers.MiddlewareHandler)
+	router.Get("/list", handlers.GetAllHandler)
+	router.Handle("/static/*", http.StripPrefix("/static/", fs))
+	router.Get("/", handlers.IndexHandler)
+	router.Post("/upload", transactionHandler.PageUploadFile)
 
 	router.Route("/users", func(r chi.Router) {
 		r.Post("/", userHandler.Create)
 		r.Post("/generate_token", userHandler.GetJWT)
+	})
+
+	router.Route("/", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(config.TokenAuth)) // get the token and inject it into the context
+		r.Use(jwtauth.Authenticator)              // validate of token
+		r.Get("/producers", listHanlder.ListProductorsBalance)
+		r.Get("/associates", listHanlder.ListAssociatesBalance)
+		r.Get("/courses/foreign", listHanlder.ListForeignCourses)
 	})
 
 	fmt.Println("Server running in: http://localhost:8000/")
