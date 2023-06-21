@@ -19,7 +19,7 @@
     - http://localhost:8000/docs/index.html
 
 ## Comments
-    - Authorization token expires in 300s.
+    - Authorization token expires in 500s.
     - Fefresh token methodologies were not implemented
     - Navigation between pages does not require authorization
     - Only transaction data endpoints  require authorization
