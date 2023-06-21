@@ -56,7 +56,7 @@ func main() {
 
 	router.Get("/users/create", handlers.CreateUserHandler)
 	router.Get("/users/login", handlers.UserLoginHandler)
-	router.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
+	router.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://24.199.71.130/docs/doc.json")))
 	router.Get("/middleware", handlers.MiddlewareHandler)
 	router.Get("/list", handlers.GetAllHandler)
 	router.Handle("/static/*", http.StripPrefix("/static/", fs))
@@ -77,6 +77,6 @@ func main() {
 		r.Get("/courses/foreign", listHanlder.ListForeignCourses)
 	})
 
-	fmt.Println("Server running in: http://localhost:8000/")
+	fmt.Println("Server running in: http://24.199.71.130/")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }

@@ -5,7 +5,7 @@
         - $ docker-compose up -d 
             or 
             - $ go run cmd/server/main.go
-        - go to: http://localhost:8000/users/login
+        - go to: http://24.199.71.130/users/login
         - choose "create user"
         - (after registering you will be redirected to the login screen)
         - log in
@@ -16,23 +16,24 @@
         $ go test ./...
 
 ## Documentation
-    - http://localhost:8000/docs/index.html
+    - http://24.199.71.130/docs/index.html
 
 ## Comments
     - Authorization token expires in 500s.
     - Fefresh token methodologies were not implemented
     - Navigation between pages does not require authorization
     - Only transaction data endpoints  require authorization
+    - if the token expires, it will not be possible to view the data on the tables, so you need to log in again
 
 ## P.S.
     - Token test 
-    - post to: http://localhost:8000/users
+    - post to: http://24.199.71.130/users
     - using: 
         {"name": "Name",
          "email": "email@email.com",
          "password": "password"
         }
-    - post to: http://localhost:8000/users/generate_token
+    - post to: http://24.199.71.130/users/generate_token
     - using:
         {"email": "email@email.com",
          "password": "password"
