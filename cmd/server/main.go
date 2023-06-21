@@ -64,7 +64,7 @@ func main() {
 	router.Post("/upload", transactionHandler.PageUploadFile)
 
 	router.Route("/users", func(r chi.Router) {
-		r.Post("/", userHandler.Create)
+		r.Post("/", userHandler.UserCreate)
 		r.Post("/generate_token", userHandler.GetJWT)
 	})
 

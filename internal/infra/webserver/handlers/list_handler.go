@@ -27,7 +27,7 @@ func NewListHandler(db database.TransactionInterface) *ListHandler {
 // @Success      200       {array}   dto.DtoSellers
 // @Failure      500       {object}  Error
 // @Router       /producers [get]
-// Security ApiKeyAuth
+// @Security ApiKeyAuth
 func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Request) {
 	var producers = make([]dto.DtoSellers, 0)
 
@@ -59,7 +59,7 @@ func (t *ListHandler) ListProductorsBalance(w http.ResponseWriter, r *http.Reque
 // @Success      200       {array}   dto.DtoSellers
 // @Failure      500       {object}  Error
 // @Router       /associates [get]
-// Security ApiKeyAuth
+// @Security ApiKeyAuth
 func (t *ListHandler) ListAssociatesBalance(w http.ResponseWriter, r *http.Request) {
 	var associates = make([]dto.DtoSellers, 0)
 
@@ -91,7 +91,7 @@ func (t *ListHandler) ListAssociatesBalance(w http.ResponseWriter, r *http.Reque
 // @Success      200       {array}   dto.DtoCourses
 // @Failure      500       {object}  Error
 // @Router       /courses/foreign [get]
-// Security ApiKeyAuth
+// @Security ApiKeyAuth
 func (t *ListHandler) ListForeignCourses(w http.ResponseWriter, r *http.Request) {
 	var courses = make([]dto.DtoCourses, 0)
 
