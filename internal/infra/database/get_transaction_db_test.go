@@ -27,7 +27,7 @@ func TestGetProductorBalanceSuccess(t *testing.T) {
 	err = TransactionDB.Create(transaction2)
 	assert.Nil(t, err)
 
-	transaction3, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 50000)
+	transaction3, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR FULL STACK", "NOGUEIRA SOUSA", 50000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction3)
 	assert.Nil(t, err)
@@ -52,26 +52,21 @@ func TestGetAssociateBalanceSuccess(t *testing.T) {
 	err = TransactionDB.Create(transaction)
 	assert.Nil(t, err)
 
-	transaction2, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR BACKEND", "CARLOS BATISTA", 70000)
+	transaction2, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR BACKEND", "KAYKE BALDER", 70000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction2)
 	assert.Nil(t, err)
 
-	transaction3, err := entity.NewTransaction(2, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 155000)
+	transaction3, err := entity.NewTransaction(2, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR FULL STACK", "MYCHAEL KALYPSO", 155000)
 	assert.Nil(t, err)
 	err = TransactionDB.Create(transaction3)
-	assert.Nil(t, err)
-
-	transaction4, err := entity.NewTransaction(4, "2022-02-03T17:23:37-03:00", "DESENVOLVEDOR FULL STACK", "CARLOS BATISTA", 50000)
-	assert.Nil(t, err)
-	err = TransactionDB.Create(transaction4)
 	assert.Nil(t, err)
 
 	associate, err := TransactionDB.GetAssociateBalance()
 	assert.Nil(t, err)
 	assert.NotNil(t, associate)
-	assert.Equal(t, "CARLOS BATISTA", associate[0].Seller)
-	assert.Equal(t, float64(1200), associate[0].TValue)
+	assert.Equal(t, "KAYKE BALDER", associate[0].Seller)
+	assert.Equal(t, float64(700), associate[0].TValue)
 }
 
 func TestGetAssociateBalanceWhenEmpty(t *testing.T) {
@@ -132,4 +127,51 @@ func TestGetProductorBalanceWhenFail(t *testing.T) {
 	assert.Empty(t, producers)
 	assert.Equal(t, producersList, producers)
 	assert.Equal(t, "fail_to_query_producers", err.Error())
+}
+
+func TestGetForeignCoursesSuccess(t *testing.T) {
+	db, err := returnDBInstance()
+	if err != nil {
+		t.Error(err)
+	}
+	db.AutoMigrate(&entity.Transaction{})
+	TransactionDB := database.NewTransaction(db)
+
+	transaction, err := entity.NewTransaction(2, "2022-02-03T17:23:37-03:00", "HOW TO BE AN ENGINEER", "CARLOS BATISTA", 255000)
+	assert.Nil(t, err)
+	err = TransactionDB.Create(transaction)
+	assert.Nil(t, err)
+
+	transaction2, err := entity.NewTransaction(4, "2022-02-03T17:21:37-03:00", "MECHANIC'S GUIDE", "EMERSON HAYKEN", 80000)
+	assert.Nil(t, err)
+	err = TransactionDB.Create(transaction2)
+	assert.Nil(t, err)
+
+	transaction3, err := entity.NewTransaction(4, "2022-02-03T17:18:37-03:00", "CURSO BÁSICO DE PINTOR", "EVANDRO BOILER", 70000)
+	assert.Nil(t, err)
+	err = TransactionDB.Create(transaction3)
+	assert.Nil(t, err)
+
+	courses, err := TransactionDB.GetForeignCourses()
+	assert.Nil(t, err)
+	assert.NotNil(t, courses)
+	assert.Equal(t, "CARLOS BATISTA", courses[0].Seller)
+	assert.Equal(t, "HOW TO BE AN ENGINEER", courses[0].Product)
+	assert.Equal(t, 2, len(courses))
+}
+
+func TestGetForeignCoursesFail(t *testing.T) {
+	var emptyList = make([]dto.DtoCourses, 0)
+	db, err := returnDBInstance()
+	if err != nil {
+		t.Error(err)
+	}
+	db.AutoMigrate(&entity.Transaction{})
+	TransactionDB := database.NewTransaction(db)
+
+	courses, err := TransactionDB.GetForeignCourses()
+	assert.Nil(t, err)
+	assert.NotNil(t, courses)
+	assert.Empty(t, courses)
+	assert.Equal(t, emptyList, courses)
 }

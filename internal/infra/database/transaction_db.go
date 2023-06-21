@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	ErrorQueryListProducer  = errors.New("fail_to_query_producers")
-	ErrorQueryListAssociate = errors.New("fail_to_query_associates")
+	ErrorQueryListProducer       = errors.New("fail_to_query_producers")
+	ErrorQueryListAssociate      = errors.New("fail_to_query_associates")
+	ErrorQueryListForeignCourses = errors.New("fail_to_query_foreign_courses")
 )
 
 type Transaction struct {
@@ -129,10 +130,11 @@ func (t *Transaction) ConsolidateSellers(dtoList []dto.DtoSellers) []dto.DtoSell
 
 func (t *Transaction) GetForeignCourses() ([]dto.DtoCourses, error) {
 	var transactions []entity.Transaction
-	var courses []dto.DtoCourses
+	var courses = make([]dto.DtoCourses, 0)
+
 	err := t.DB.Where("foreign_product = ?", true).Find(&transactions).Error
 	if err != nil {
-		return nil, err
+		return nil, ErrorQueryListForeignCourses
 	}
 	for _, transaction := range transactions {
 		dtoCourse := dto.DtoCourses{
@@ -144,5 +146,6 @@ func (t *Transaction) GetForeignCourses() ([]dto.DtoCourses, error) {
 		}
 		courses = append(courses, dtoCourse)
 	}
+
 	return courses, nil
 }
