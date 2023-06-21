@@ -23,6 +23,7 @@
     - Fefresh token methodologies were not implemented
     - Navigation between pages does not require authorization
     - Only transaction data endpoints  require authorization
+    - if the token expires, it will not be possible to view the data on the tables, so you need to log in again
 
 ## P.S.
     - Token test 
