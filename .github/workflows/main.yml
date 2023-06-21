@@ -20,7 +20,6 @@ jobs:
             mrpsousa/api-go-hubla:v${{github.run_number}}
             mrpsousa/api-go-hubla:latest
 
-
 # steps:
 #       - uses: actions/checkout@v3.5.2
 #       - name: DockerHub Authentication
