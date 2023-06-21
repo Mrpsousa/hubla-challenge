@@ -37,7 +37,7 @@ func NewUserHandler(userDB database.UserInterface, jwt *jwtauth.JWTAuth, jwtExpi
 // @Success      201
 // @Failure      500         {object}  Error
 // @Router       /users [post]
-func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) UserCreate(w http.ResponseWriter, r *http.Request) {
 	var user dto.CreateUserInput
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {

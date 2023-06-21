@@ -49,12 +49,8 @@ metadata:
   name: goserver-secret
 type: Opaque
 data:
-  DB_DRIVER: " "
-  DB_HOST: " "
-  DB_PORT: " "
-  DB_USER: " "
-  DB_PASSWORD: " "
-  DB_NAME: " "
+  JWT_SECRET: "c2VjcmV0Cg=="
+  JWT_EXPIRESIN: "MzAwCg=="
 
 
 

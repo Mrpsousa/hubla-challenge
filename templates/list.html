@@ -4,8 +4,24 @@
     <meta charset="UTF-8" />
     <title>List</title>
     <link rel="stylesheet" href="../static/list.css">
+    <style>
+      .login-button {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        background-color: #ff0000;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
+    <button class="login-button" onclick="redirectToLoginPage()">
+      LOGIN
+    </button>
     <button class="upload-button" onclick="redirectToOtherPage()">
       UPLOAD FILES
     </button>
@@ -43,7 +59,7 @@
           <thead>
             <tr>
               <th>Type</th>
-              <th>Created At</th>
+              <th>Date</th>
               <th>Product</th>
               <th>Value</th>
               <th>Seller</th>
@@ -55,6 +71,9 @@
     </div>
 
     <script>
+       function redirectToLoginPage() {
+        window.location.href = "http://localhost:8000/users/login";
+      }
       // Fetch data from the /producers endpoint and populate the table
       const accessToken = localStorage.getItem("access_token");
 
