@@ -1,6 +1,6 @@
 # Hubla-challenge
 
-## Running and Using
+## Running and Using Locally
     In project root
         - $ docker-compose up -d 
             or 
@@ -11,6 +11,11 @@
         - log in
         - now you can see lists and upload file
 
+## Project is also serverless
+    - http://24.199.71.130//users/login
+    - http://24.199.71.130/docs/index.html
+    P.S: Working without any kind of authorization
+
 ## Run tests
     In project root
         $ go test ./...
@@ -19,10 +24,12 @@
     - http://localhost:8000/docs/index.html
 
 ## Comments
-    - Authorization token expires in 300s.
-    - Fefresh token methodologies were not implemented
+    - In relation to the front, SPA frameworks were not used, being very simple and containing some weak points of authorization is because i am just Backend developer
+    - Authorization token expires in 500s.
+    - Refresh token methodologies were not implemented
     - Navigation between pages does not require authorization
     - Only transaction data endpoints  require authorization
+    - if the token expires, it will not be possible to view the data on the tables, so you need to log in again
 
 ## P.S.
     - Token test 
@@ -39,3 +46,6 @@
         }
     - return must be something like that:
         {"access_token": "eyJhbGciOiJIUz..."}
+
+
+

@@ -32,10 +32,6 @@ import (
 
 // @host      localhost:8000
 // @BasePath  /
-// securityDefinitions.apikey ApiKeyAuth
-// in header
-// name Authorization
-
 func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	config := configs.NewConfig()
@@ -69,14 +65,15 @@ func main() {
 		r.Post("/generate_token", userHandler.GetJWT)
 	})
 
+	//authorization protected endpoints
 	router.Route("/", func(r chi.Router) {
-		r.Use(jwtauth.Verifier(config.TokenAuth)) // get the token and inject it into the context
-		r.Use(jwtauth.Authenticator)              // validate of token
+		r.Use(jwtauth.Verifier(config.TokenAuth))
+		r.Use(jwtauth.Authenticator)
 		r.Get("/producers", listHanlder.ListProductorsBalance)
 		r.Get("/associates", listHanlder.ListAssociatesBalance)
 		r.Get("/courses/foreign", listHanlder.ListForeignCourses)
 	})
 
-	fmt.Println("Server running in: http://localhost:8000/")
+	fmt.Println("Server running in: http://localhost:8000/users/login")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }

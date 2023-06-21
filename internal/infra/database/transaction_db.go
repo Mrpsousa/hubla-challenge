@@ -132,7 +132,7 @@ func (t *Transaction) GetForeignCourses() ([]dto.DtoCourses, error) {
 	var transactions []entity.Transaction
 	var courses = make([]dto.DtoCourses, 0)
 
-	err := t.DB.Where("foreign_product = ?", true).Find(&transactions).Error
+	err := t.DB.Where("foreign_product = ?", true).Group("seller").Find(&transactions).Error
 	if err != nil {
 		return nil, ErrorQueryListForeignCourses
 	}
