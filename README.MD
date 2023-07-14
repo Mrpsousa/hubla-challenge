@@ -24,7 +24,6 @@
     - http://localhost:8000/docs/index.html
 
 ## Comments
-    - In relation to the front, SPA frameworks were not used, being very simple and containing some weak points of authorization is because i am just Backend developer
     - Authorization token expires in 500s.
     - Refresh token methodologies were not implemented
     - Navigation between pages does not require authorization
